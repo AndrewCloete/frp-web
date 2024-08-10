@@ -9,3 +9,27 @@
 .RecipeInTable {
   padding-bottom: 20px;
 }
+
+.RecipeLine {
+  padding: 10px 0px 10px 0px;
+}
+
+.RecipeListItem {
+  display: flex;
+}
+
+.RecipeTitle {
+  width: 150px;
+}
+
+.RecipeListImageDiv {
+  width: 300px;
+}
+.RecipeListImage {
+  padding: 0px 30px 0px 30px;
+  max-height: 300px;
+}
+
+.RecipeInstructions {
+  padding: 0px 10px 0px 10px;
+}
