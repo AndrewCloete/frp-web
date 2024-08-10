@@ -2,13 +2,13 @@ import { useEffect, useState } from "react";
 import "./App.css";
 import * as m from "./model";
 
-async function getRecipes(): Promise<m.Recipe[]> {
+async function getItems<T>(collection: string): Promise<T[]> {
   const url = "http://localhost:8090";
   const requestOptionsFetch = {
     method: "GET",
   };
-  const response = await fetch(url + "/recipes", requestOptionsFetch);
-  const tasks_data = (await response.json()) as m.Recipe[];
+  const response = await fetch(url + "/" + collection, requestOptionsFetch);
+  const tasks_data = (await response.json()) as T[];
   return tasks_data;
 }
 
@@ -114,22 +114,85 @@ function Recipes(props: { recipes: m.Recipe[] }) {
   );
 }
 
+function Groceries(props: { groceries: m.Grocery[] }) {
+  console.log(props.groceries);
+  return (
+    <div className="Groceries">
+      <table>
+        <tbody>
+          {props.groceries.map((g) => {
+            return (
+              <tr key={g.name}>
+                <td>{g.name}</td>
+                <td>{g.conv.sec}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function DropdownSelector(props: {
+  options: string[];
+  set: (selected: string) => void;
+}) {
+  const [selectedOption, setSelectedOption] = useState<string>("");
+
+  const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    let val = event.target.value;
+    props.set(val);
+    setSelectedOption(val);
+  };
+  return (
+    <div>
+      <select id="dropdown" value={selectedOption} onChange={handleChange}>
+        {props.options.map((option, index) => (
+          <option key={index} value={option}>
+            {option}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}
+
+const tabs = ["Recipes", "Groceries"] as const;
+export type Tab = (typeof tabs)[number];
+
 function App() {
+  let [tab, setTab] = useState<Tab>("Recipes");
   let [recipes, setRecipes] = useState<m.Recipe[]>([]);
+  let [groceries, setGroceries] = useState<m.Grocery[]>([]);
 
-  async function loadRecipes() {
-    const r = await getRecipes();
+  async function load() {
+    const r = await getItems<m.Recipe>("recipes");
+    const g = await getItems<m.Grocery>("groceries");
     setRecipes(r);
+    setGroceries(g);
   }
-
   useEffect(() => {
-    loadRecipes();
+    load();
     return;
   }, []);
 
+  const renderContent = () => {
+    switch (tab) {
+      case "Recipes":
+        return <Recipes recipes={recipes}></Recipes>;
+      case "Groceries":
+        return <Groceries groceries={groceries}></Groceries>;
+    }
+  };
+
   return (
     <div className="App">
-      <Recipes recipes={recipes}></Recipes>
+      <DropdownSelector
+        options={tabs.map((t) => t)}
+        set={(s) => setTab(s as Tab)}
+      ></DropdownSelector>
+      {renderContent()}
     </div>
   );
 }
