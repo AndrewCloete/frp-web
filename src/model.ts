@@ -19,10 +19,10 @@ type Conversion = {
     };
     rate: number;
   };
-  sec: string;
 };
 
 export type Grocery = {
   name: string;
-  conv: Conversion;
+  sec: string;
+  selected: boolean;
 };

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import * as m from "./model";
+import * as _ from "lodash/fp";
 
 async function getItems<T>(collection: string): Promise<T[]> {
   const url = "http://localhost:8090";
@@ -116,20 +117,57 @@ function Recipes(props: { recipes: m.Recipe[] }) {
 
 function Groceries(props: { groceries: m.Grocery[] }) {
   console.log(props.groceries);
+  const groups = _.groupBy((t: m.Grocery) => t.sec)(props.groceries);
+  const [filterSelected, setFilterSelected] = useState<boolean>(false);
+
   return (
     <div className="Groceries">
-      <table>
-        <tbody>
-          {props.groceries.map((g) => {
-            return (
-              <tr key={g.name}>
-                <td>{g.name}</td>
-                <td>{g.conv.sec}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+      <div>
+        Filter selected
+        <input
+          type="checkbox"
+          checked={filterSelected && true}
+          readOnly
+          onClick={() => {
+            setFilterSelected(!filterSelected);
+          }}
+        ></input>
+      </div>
+      {Object.entries(groups).map((entry) => {
+        let section = entry[0];
+        let groceries = entry[1];
+        return (
+          <div className="GrocerySection" key={section}>
+            <div>
+              <b>{section}</b>
+            </div>
+            <table>
+              <tbody>
+                {groceries
+                  .filter((g) => (filterSelected ? !g.selected : true))
+                  .map((g) => {
+                    return (
+                      <tr key={g.name}>
+                        <td>
+                          <input
+                            type="checkbox"
+                            checked={g.selected && true}
+                            readOnly
+                            onClick={() => {
+                              g.selected = !g.selected;
+                              console.log(props.groceries);
+                            }}
+                          ></input>
+                        </td>
+                        <td className="GroceryTableName">{g.name}</td>
+                      </tr>
+                    );
+                  })}
+              </tbody>
+            </table>
+          </div>
+        );
+      })}
     </div>
   );
 }

@@ -3,7 +3,8 @@
 }
 
 .RecipeTitle {
-  padding-bottom: 20px;
+  width: 150px;
+  padding-bottom: 5px;
 }
 
 .RecipeInTable {
@@ -26,6 +27,13 @@
     border-spacing: 0px;
   }
 }
+.GrocerySection {
+  padding-top: 10px;
+}
+
+.GroceryTableName {
+  width: 10em;
+}
 
 .Groceries {
   padding-top: 20px;
@@ -47,15 +55,11 @@
 }
 
 .RecipeLine {
-  padding: 10px 0px 10px 0px;
+  padding: 5px 0px 2px 0px;
 }
 
 .RecipeListItem {
   display: flex;
-}
-
-.RecipeTitle {
-  width: 150px;
 }
 
 .RecipeListImageDiv {
